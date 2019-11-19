@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>智慧城市数据综合应用演示</title>
+		<link href="libs/bootstrap-3.3.7-dist/css/bootstrap.css" rel="stylesheet" type="text/css" />
+		<link href="libs/bootstrap-treeview.min.css" rel="stylesheet" type="text/css" />
+		<link href="libs/ol.css" rel="stylesheet" type="text/css" />
+		<link rel="stylesheet" href="assistant/css/extra.css" />
+	</head>
+	<body>
+		<div id="map" class="map">
+			<div id="popup1"></div>
+		</div>
+
+		<div class="left-panel">
+			<div class="left-tree-header"><span>数据融合展示</span></div>
+			<di id="tree" class="leftMenu"></di>
+		</div>
+		<div class="switch-btn">
+			<span onclick="switchBtn(this)">
+				<span class="glyphicon glyphicon-menu-left"></span>
+			</span></div>
+
+		<!--下拉菜单按钮-->
+		<div class="tab-btns">
+			<div class="measure-box">
+				<div class="measure-title">
+					<span>测量工具</span><span class="glyphicon glyphicon-menu-up"></span>
+				</div>
+				<div class="measure-content">
+					<div class="measure_area_oper"><span class="glyphicon glyphicon-menu-hamburger"></span><span>测面</span></div>
+					<div class="measure_length_oper"><span class="glyphicon glyphicon-resize-horizontal"></span><span>测距</span></div>
+				</div>
+			</div>
+			<div class="select-box">
+				<div class="select-title">
+					<span>框选查询</span><span class="glyphicon glyphicon-menu-up"></span>
+				</div>
+				<div class="select-content">
+					<div class="frame_select"><span class="glyphicon glyphicon-fullscreen"></span><span>框选</span></div>
+					<div class="path_select"><span class="glyphicon glyphicon-sound-stereo"></span><span>径选</span></div>
+				</div>
+			</div>
+		</div>
+		<!--table  -->
+		<div class="btn_oper_table" ><span class="glyphicon glyphicon-fullscreen"></span></div>
+		<div class="table-field ">
+			<div class="table-field-title">部门分布详情<span class="pop-del glyphicon glyphicon-remove" id="table_field_close"></div>
+			<div class="table-responsive">
+			<table class="table text-nowrap table-bordered detail_table" id="detail_table" >
+				<thead>
+					<tr>
+						<td>单位名称</td>
+						<td >经度</td>
+						<td >纬度</td>
+						<td >操作</td>
+					</tr>
+				</thead>
+				<tbody></tbody>
+			</table></div>
+		</div>
+		<script type="text/javascript" src="libs/bootstrap-3.3.7-dist/jquery-3.2.1.min.js"></script>
+		<script type="text/javascript" src="libs/bootstrap-3.3.7-dist/js/bootstrap.js"></script>
+		<script type="text/javascript" src="libs/bootstrap-treeview.min.js"></script>
+		<script src="libs/ol.js"></script>
+		<script src="assistant/style/commonStyle.js"></script>
+		<script src="assistant/js/eventHandle.js"></script>
+		<script src="assistant/js/vectorHandle.js"></script>
+		<script src="assistant/js/dataHandle.js"></script>
+		<script src="assistant/conf/conf.js"></script>
+		<script src="assistant/state/state.js"></script>
+		<script src="assistant/js/interaction/interactionHandle.js"></script>
+		<script src="assistant/js/interaction/point.js"></script>
+		<script src="assistant/js/interaction/polygon.js"></script>
+		<script src="assistant/js/interaction/lineString.js"></script>
+		<script src="assistant/js/interaction/circle.js"></script>
+		<script src="assistant/js/interaction/measure.js"></script>
+		<script src="assistant/js/interaction/lengthMeasure.js"></script>
+		<script src="assistant/js/interaction/areaMeasure.js"></script>
+		<script src="assistant/js/interaction/drawPrimary.js"></script>
+
+		<script type="text/javascript">
+			// 初始化地图
+			var map = new ol.Map({
+				target: 'map',
+				view: new ol.View({
+					projection: 'EPSG:4326',
+					// center: [104.06449127, 30.65433469],
+					center: [105.39843910932542, -58.0166010260582],
+					// zoom: 11,
+					// maxZoom: 20
+					minZoom: 3,
+					zoom: 8,
+					maxZoom: 9
+				})
+			});
+			//cacheVector 保存所有矢量图层实例	
+			var cacheVector = [];
+
+
+			// redraw是否重绘popover
+			State.redraw = true;
+			State.corrdinateArr_global = [];
+			// 缓存所以 feature [{idNum:int,type:string,fObj:feature}] 
+			// idNum记录id,type记录图形类型(由于是多个vector渲染，可根据这个获取相应vector obj)
+			State.drawFeatureAll = [];
+			// 实例化 事件操作
+			var eventHandle = new EventHandle(map);
+			// 创建 mask 
+			var popup = eventHandle.createMask();
+			// 矢量图层操作实例
+			var VectorHandle = new VectorHandle({
+				map: map,
+				eventHandle: eventHandle,
+				popup: popup
+			});
+
+			// 数据操作
+			var DataHandle = new DataHandle(map, VectorHandle, cacheVector, eventHandle, popup);
+			// DataHandle.createList(); // 数据创建
+			// 页面初始化时 开启 popver 弹框
+			map.addOverlay(popup);
+			eventHandle.mapSingleClick(popup);
+
+			// 瓦片图层
+			var raster = new ol.layer.Tile({	
+				source: new ol.source.XYZ({
+					tileUrlFunction: function(coordinate) {
+
+
+						var z = coordinate[0];
+						var x = Math.abs(coordinate[1]);					
+						var y = Math.pow(2, z) + coordinate[2];
+						return "./static/mkt84/" + z + "/" + x + "/" + y + ".png";
+					},
+					crossOrigin: 'anonymous',
+					projection: 'EPSG:4326'
+				}),
+				visible: true
+			});
+
+			map.addLayer(raster);
+
+			// 树形菜单 数据获取
+			function getTree(callback) {
+				// Some logic to retrieve, or generate tree structure
+				$.getJSON("assistant/json/testGeo.json", function(data) {
+					callback && callback(data);
+					getCoordinateByforeachTreeData(data);
+				});
+			}
+
+			function _init_tree_here() {
+				getTree(resData => {
+					$('#tree').treeview({
+						data: resData,
+						showCheckbox: true,
+						hierarchicalCheck: true,
+						highlightSelected: false,
+						multiSelect: false,
+						onhoverColor: "#3399FF",
+						levels: 2,
+
+					});
+				})
+			}
+			// 初始化树形菜单
+			_init_tree_here();
+			 // 封装一个nodeId 和数顺序对应的json (因为左边数渲染后nodeID会重置为树形列表的顺序号如【0,1,2,3】) 用于框选时选中数菜单
+			State.recordTreeQuee={};
+			// 【扁平化 tree data】 将tree 中的coordinate全部取出 ,
+			 let counter=0;
+			// 用于判断绘制的图形区域是否包含指定的坐标点
+			function getCoordinateByforeachTreeData(node) {
+				let coordinatesArrObj = "";
+				node.forEach((item, index) => {
+
+					let curr = item.nodeId;
+					State.recordTreeQuee[curr] = counter++;
+
+					if (item.nodes != null && item.nodes.length > 0) {
+						getCoordinateByforeachTreeData(item.nodes);
+					} else {
+						coordinatesArrObj = eval("([" + item.coordinates + "])");
+						State.corrdinateArr_global.push({
+							nodeId: item.nodeId,
+							pId: item.pId,
+							level:item.level,
+							type:item.type,
+							text: item.text,
+							coordinates: coordinatesArrObj,
+							lon: coordinatesArrObj[0],
+							lat: coordinatesArrObj[1]
+						})
+					}
+			
+				})
+			}
+			// 关闭左边菜单
+			function switchBtn(val) {
+				var classlist = $(val).children().attr("class");
+				if (classlist.toString().indexOf("right") > -1) {
+					$(val).children().attr("class", classlist.toString().replace("right", "left"));
+				} else {
+					$(val).children().attr("class", classlist.toString().replace("left", "right"));
+				}
+
+				if ($(".left-panel").css("display") !== "none") {
+					$(".left-panel").hide();
+					$(".switch-btn").css({
+						"left": "0px"
+					});
+				} else {
+					$(".switch-btn").css({
+						"left": "200px"
+					});
+					$(".left-panel").show();
+				}
+			}
+		</script>
+
+	</body>
+</html>

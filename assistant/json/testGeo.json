@@ -1,0 +1,153 @@
+[{
+		"nodeId": 1,
+		"pId": 0,
+		"text": "交通",
+		"icon": "glyphicon glyphicon-knight",
+		"coordinates": "",
+		"state": { 
+			"checked": false, 
+			"expanded": true,
+			"selected": false
+		},
+		"nodes": [{
+			"text": "1号线",
+			"type":"traffic",
+			"level":8,
+			"nodeId": 101,
+			"pId": 1,
+			"icon": "",
+			"coordinates": "106.11474622786045, -58.548889126628644"
+		}, {
+			"text": "2号线",
+			"type":"traffic",
+			"level":8,
+			"nodeId": 102,
+			"pId": 1,
+			"icon": "",
+			"coordinates": "104.84912109375, -57.96881121955813"
+		}, {
+			"text": "3号线",
+			"type":"traffic",
+			"level":8,
+			"nodeId": 103,
+			"pId": 1,
+			"icon": "",
+			"coordinates": "103.92187506705523, -57.96002203971148"
+		}]
+
+	},
+	{
+		"nodeId": 2,
+		"pId": 0,
+		"text": "景点",
+		"icon": "glyphicon glyphicon-globe",
+		"coordinates": "",
+		"state": { 
+			"checked": false,
+
+			"expanded": false, 
+			"selected": false 
+		},
+		"nodes": [{
+			"text": "锦鲤",	
+			"type":"Attractions",
+			"level":8,
+			"nodeId": 201,
+			"pId": 2,
+			"icon": "",
+			"coordinates": "106.43115254491569, -57.46453856583685"
+		}, {
+			"text": "宽则巷子",
+				"type":"Attractions",
+				"level":8,
+			"nodeId": 202,
+			"pId": 2,
+			"icon": "",
+			"coordinates": "105.56982431933285, -57.20526123885065"
+		}, {
+			"text": "春熙路",
+				"type":"Attractions",
+				"level":8,
+			"nodeId": 203,
+			"pId": 2,
+			"icon": "",
+			"coordinates": "105.65332044661045, -57.575500471517444"
+		}]
+
+	},
+	{
+		"nodeId": 3,
+		"pId": 0,
+		"text": "住建",
+		"icon": "glyphicon glyphicon-send",
+		"coordinates": "",
+		"state": { 
+			"checked": false, 
+			"expanded": false, 
+			"selected": false 
+		},
+		"nodes": [{
+			"text": "中铁十四局",
+			"nodeId": 301,
+			"type":"building",
+			"level":8,
+			"pId": 3,
+			"icon": "",
+			"coordinates": "104.98315426334739, -57.240417488850646"
+		}, {
+			"text": "中铁十二局",
+			"type":"building",
+			"level":8,
+			"nodeId": 302,
+			"pId": 3,
+			"icon": "",
+			"coordinates": "104.30200200341642, -57.26019287109374"
+		}, {
+			"text": "中铁七局",
+			"type":"building",
+			"level":8,
+			"nodeId": 303,
+			"pId": 3,
+			"icon": "",
+			"coordinates": "105.20727545768023, -57.60516359098255"
+		}]
+	},
+	{
+		"nodeId": 4,
+		"pId": 0,
+		"text": "影院",
+		"icon": "glyphicon glyphicon-bed",
+		"coordinates": "",
+		"state": {
+			"checked": false, 
+		
+			"expanded": false,
+			"selected": false 
+		},
+		"nodes": [{
+			"text": "万达影城",			
+			"type":"cinema",
+			"level":8,
+			"nodeId": 401,
+			"pId": 4,
+			"icon": "",
+			"coordinates": "103.60107431933284, -61.041137762367725"
+		}, {
+			"text": "王府井影院",
+			"type":"cinema",
+			"level":8,
+			"nodeId": 401,
+			"pId": 4,
+			"icon": "",
+			"coordinates": "105.23144551366568, -59.42834476009011"
+		}, {
+			"text": "太平洋影城",
+			"type":"cinema",
+			"level":8,
+			"nodeId": 401,
+			"pId": 4,
+			"icon": "",
+			"coordinates": "106.1015625, -60.57531734928489"
+		}]
+	}
+]
